@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance Conduit — Coming Soon</title>
+<meta name="description" content="Something is coming. The story behind it is coming too.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,wght@0,400;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --bg-deep: #07080b;
+    --text-primary: #f2efe9;
+    --text-muted: #5a6472;
+    --accent: #e8b04b;
+    --accent-bright: #ffd27a;
+    --line-idle: #1c2029;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    background: radial-gradient(120% 100% at 50% 0%, var(--bg) 0%, var(--bg-deep) 100%);
+    color: var(--text-primary);
+    font-family: 'Space Grotesk', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px;
+    overflow: hidden;
+  }
+
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 640px;
+    width: 100%;
+  }
+
+  .wordmark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 6vw, 46px);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+
+  /* The conduit: a line with a single pulse of light traveling through it —
+     the one signature element, kept deliberately quiet and literal to the
+     name without hinting at what runs through it. */
+  .conduit {
+    position: relative;
+    width: min(360px, 70vw);
+    height: 2px;
+    background: var(--line-idle);
+    margin: 28px 0 36px;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .conduit::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -40px;
+    width: 40px;
+    height: 8px;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent) 0%, rgba(232, 176, 75, 0) 70%);
+    filter: blur(1px);
+    animation: pulse-travel 5.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-travel {
+    0%   { left: -40px; opacity: 0; }
+    8%   { opacity: 1; }
+    50%  { left: calc(100% - 0px); opacity: 1; }
+    58%  { opacity: 0; }
+    100% { left: calc(100% - 0px); opacity: 0; }
+  }
+
+  .tagline {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(19px, 3.4vw, 24px);
+    line-height: 1.5;
+    color: var(--text-primary);
+    max-width: 460px;
+  }
+
+  .footer-block {
+    margin-top: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .coming-soon {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent-bright);
+  }
+
+  .story-note {
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .copyright {
+    margin-top: 40px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .conduit::after {
+      animation: none;
+      left: 50%;
+      opacity: 0.9;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .footer-block { margin-top: 44px; }
+  }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <div class="wordmark">Compliance Conduit</div>
+    <div class="conduit" aria-hidden="true"></div>
+    <p class="tagline">They'll tell you one person can't change the world.<br>They're the only ones who ever have.</p>
+
+    <div class="footer-block">
+      <div class="coming-soon">Coming Soon</div>
+      <p class="story-note">A world-changing idea — and the story of how it got here.</p>
+    </div>
+
+    <div class="copyright">Compliance Conduit</div>
+  </main>
+</body>
+</html>
