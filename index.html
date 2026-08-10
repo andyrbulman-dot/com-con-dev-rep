@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compliance Conduit</title>
-<meta name="description" content="Prepare and organise your own case, on your own terms.">
 
-<!-- Open Graph — controls the preview card on Facebook, LinkedIn, WhatsApp, etc. -->
+<!-- Open Graph — controls the preview card on Facebook, LinkedIn, WhatsApp, etc.
+     Deliberately no description: the preview should show only the shield
+     image and the title, nothing else. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Compliance Conduit">
 <meta property="og:title" content="Compliance Conduit">
-<meta property="og:description" content="Prepare and organise your own case, on your own terms.">
 <meta property="og:url" content="https://complianceconduit.com">
 <meta property="og:image" content="https://complianceconduit.com/social-preview.png">
 <meta property="og:image:width" content="1200">
@@ -19,7 +19,6 @@
 <!-- Twitter / X Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Compliance Conduit">
-<meta name="twitter:description" content="Prepare and organise your own case, on your own terms.">
 <meta name="twitter:image" content="https://complianceconduit.com/social-preview.png">
 
 <style>
@@ -86,6 +85,9 @@
     flex: 1;
     height: 100vh;
     overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
     padding: 56px 56px 56px 8px;
     scrollbar-width: thin;
     scrollbar-color: var(--steel-dim) transparent;
@@ -114,13 +116,14 @@
     align-items: center;
   }
 
-  /* faint watermark shield centered behind the right-panel's text
-     content — offset past the fixed-width left branding column so it
-     doesn't end up sitting behind the logo instead */
+  /* faint watermark shield centered behind the right-panel's stage —
+     right-panel is a centered flex column, so this targets its true
+     geometric center (accounting for the intentionally asymmetric
+     padding that keeps a sliver of scrollbar visible on the right). */
   .watermark {
     position: fixed;
     top: 50%;
-    left: calc((100vw + min(38vw, 440px)) / 2);
+    left: calc(50vw + min(38vw, 440px) / 2 - 24px);
     width: min(48vw, 560px);
     height: min(48vw, 560px);
     transform: translate(-50%, -50%);
@@ -197,45 +200,25 @@
     color: var(--steel-dim);
   }
 
-  .chain-divider {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 46px 0 34px;
-    width: 100%;
-    max-width: 320px;
-  }
-  .chain-divider::before, .chain-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--steel-dim);
-    opacity: 0.5;
-  }
-  .chain-divider span {
-    font-family: 'Plex Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    color: var(--steel-dim);
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  /* Long-form content sections. Each gets generous vertical breathing
-     room — cramped spacing would undercut what these are actually saying. */
-  .content-section {
+  /* Long-form content lives in a single stage: exactly one item —
+     the manifesto, the poem, or one "thought" — is present at a time.
+     The whole stage cross-fades as one unit when it switches; nothing
+     else is ever in the DOM alongside it. */
+  .stage-wrap {
+    margin: auto;
     max-width: 620px;
-    padding: 44px 0;
+    width: 100%;
     text-align: center;
   }
-  .content-section + .content-section {
-    border-top: 1px solid var(--steel-dim);
-    border-top-color: rgba(90, 100, 115, 0.25);
+
+  .stage {
+    transition: opacity 0.6s ease;
+  }
+  .stage.fade { opacity: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    .stage { transition: none; }
   }
 
-  /* the manifesto is a single unified statement — always shown in full,
-     never split or rotated, unlike the "a thought, each visit" quotes
-     further down the page */
   .manifesto p {
     font-family: 'Crimson', serif;
     font-style: italic;
@@ -244,14 +227,6 @@
     color: var(--white-crisp);
   }
   .manifesto p + p { margin-top: 26px; }
-
-  .origin-story p {
-    font-family: 'Crimson', serif;
-    font-size: clamp(16px, 2.1vw, 18px);
-    line-height: 1.75;
-    color: var(--steel-light);
-  }
-  .origin-story p + p { margin-top: 20px; }
 
   .poem-eyebrow {
     font-family: 'Plex Mono', monospace;
@@ -276,48 +251,20 @@
   }
   .stanza + .stanza { margin-top: 30px; }
 
-  .quote-block-section {
-    max-width: 620px;
-    padding: 20px 0 40px;
-  }
-
-  .quote-block {
-    min-height: 140px;
+  .stage-dots {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    width: 100%;
-  }
-
-  .quote-text {
-    font-family: 'Crimson', serif;
-    font-style: italic;
-    font-size: clamp(19px, 2.6vw, 24px);
-    line-height: 1.55;
-    color: var(--steel-light);
-    max-width: 560px;
-    transition: opacity 0.6s ease;
-  }
-  .quote-text.fade { opacity: 0; }
-
-  @media (prefers-reduced-motion: reduce) {
-    .quote-text { transition: none; }
-  }
-
-  .quote-dots {
-    display: flex;
     gap: 7px;
-    margin-top: 26px;
+    margin-top: 30px;
   }
-  .quote-dots .dot {
+  .stage-dots .dot {
     width: 5px; height: 5px;
     border-radius: 50%;
     background: var(--steel-dim);
     opacity: 0.5;
     transition: opacity 0.4s ease, background 0.4s ease;
   }
-  .quote-dots .dot.active {
+  .stage-dots .dot.active {
     background: var(--steel-light);
     opacity: 1;
   }
@@ -353,36 +300,10 @@
 
   <div class="right-panel">
 
-  <section class="content-section manifesto">
-    <p>We are told the system is rigged, change is impossible, and we are destined to choke in a fog of stagnation.</p>
-    <p>Yet, a single idea can be the winds of salvation, blowing away the fog of doubt and despair.</p>
-  </section>
-
-  <section class="content-section origin-story">
-    <p>A life of struggle can build its barriers brick by brick, slowly locking a person away from the world.</p>
-    <p>I found myself locked behind those very walls, and so I made it my mission to tear them down&mdash;freeing myself to live life anew. With every brick I removed, I learned a lesson, and I am using those lessons to design a system to help others tear down the walls that contain them.</p>
-  </section>
-
-  <section class="content-section poem">
-    <div class="poem-eyebrow">A poem</div>
-    <div class="poem-title">Scars Became My Lessons</div>
-
-    <div class="stanza">I've lived a life of battles,<br>that earned me many scars,<br>but these scars became my lessons,<br>though the blows they struck were hard.</div>
-    <div class="stanza">I've had my share of triumphs<br>and all too much despair.<br>But the things my life has taught me,<br>have helped me to repair.</div>
-    <div class="stanza">The education that this gave me,<br>remains with me today.<br>As I move on to the future,<br>and I look back and say:</div>
-    <div class="stanza">I won't look back with sorrow,<br>or try to place the blame.<br>For I can see no sadness,<br>and I don't see the pain.</div>
-    <div class="stanza">I see obstacles I've overcome,<br>and battles I've survived.<br>The memory of pain a ghost,<br>and I'm very much alive.</div>
-    <div class="stanza">From this knowledge I forged tools,<br>to build a house of stone,<br>and then when it's completed,<br>the world can call it home.</div>
-  </section>
-
-  <div class="chain-divider"><span>A thought, each visit</span></div>
-
-  <section class="quote-block-section">
-    <div class="quote-block">
-      <div class="quote-text" id="quote-text"></div>
-      <div class="quote-dots" id="quote-dots"></div>
-    </div>
-  </section>
+  <div class="stage-wrap">
+    <div class="stage" id="stage"></div>
+    <div class="stage-dots" id="stage-dots"></div>
+  </div>
 
   <footer></footer>
 
@@ -394,32 +315,48 @@
     requestAnimationFrame(() => document.body.classList.add('loaded'));
   });
 
+  const MANIFESTO_HTML =
+    '<div class="manifesto">' +
+      '<p>We are told the system is rigged, change is impossible, and we are destined to choke in a fog of stagnation.</p>' +
+      '<p>Yet, a single idea can be the winds of salvation, blowing away the fog of doubt and despair.</p>' +
+    '</div>';
+
+  // The poem stays whole — deliberately the one exception to "no
+  // scroll". Splitting it across visits was worse: there's no guarantee
+  // a returning visitor is on the same browser/device to pick up where
+  // they left off, and even if they were, they likely won't remember
+  // the previous stanza well enough to connect it to the next one.
+  const POEM_HTML =
+    '<div class="poem">' +
+      '<div class="poem-eyebrow">A poem</div>' +
+      '<div class="poem-title">Scars Became My Lessons</div>' +
+      '<div class="stanza">I\u2019ve lived a life of battles,<br>that earned me many scars,<br>but these scars became my lessons,<br>though the blows they struck were hard.</div>' +
+      '<div class="stanza">I\u2019ve had my share of triumphs<br>and all too much despair.<br>But the things my life has taught me,<br>have helped me to repair.</div>' +
+      '<div class="stanza">The education that this gave me,<br>remains with me today.<br>As I move on to the future,<br>and I look back and say:</div>' +
+      '<div class="stanza">I won\u2019t look back with sorrow,<br>or try to place the blame.<br>For I can see no sadness,<br>and I don\u2019t see the pain.</div>' +
+      '<div class="stanza">I see obstacles I\u2019ve overcome,<br>and battles I\u2019ve survived.<br>The memory of pain a ghost,<br>and I\u2019m very much alive.</div>' +
+      '<div class="stanza">From this knowledge I forged tools,<br>to build a house of stone,<br>and then when it\u2019s completed,<br>the world can call it home.</div>' +
+    '</div>';
+
+  // A single master list — the manifesto and the whole poem are each ONE
+  // item. Only one item is ever in the stage at a time; nothing else
+  // exists in the DOM alongside it until it fades to the next. No other
+  // quotes here — this stays only your own words, nothing that hints at
+  // what the site actually does.
+  const STAGE_ITEMS = [MANIFESTO_HTML, POEM_HTML];
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   // TESTING vs LIVE rotation speed — a visitor should generally see one
-  // quote per visit, only advancing to the next if they leave the page
+  // item per visit, only advancing to the next if they leave the page
   // open for a long stretch. Flip TESTING to false (or just change the
   // ms value) when this goes live.
   const TESTING = true;
   const ROTATE_INTERVAL_MS = TESTING ? 15000 : 5 * 60 * 1000; // testing: 15s — live: 5 min
 
-  // Quotes support blank "" placeholder slots so more can be added later
-  // without needing to touch the rotation logic at all — any blank is
-  // silently skipped when the rotator lands on it.
-  const QUOTES = [
-    "You don't need to be a lawyer to be organised. You need to be organised to not need one.",
-    "Every document you keep today is a sentence you won't have to reconstruct from memory tomorrow.",
-    "",
-    "The strongest case is the one with nothing left to piece together.",
-    "Confidence in a dispute comes from preparation, not performance.",
-    "",
-    "A well-kept record speaks louder than a raised voice.",
-    "You are allowed to take up space in your own defence."
-  ];
-
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Generic one-at-a-time text rotator — used for the "a thought, each
-  // and the "a thought, each visit" quote pool below, each with its own
-  // items/element/storage so showing one doesn't affect the other.
+  // One-at-a-time stage rotator. Swaps the stage's entire innerHTML as a
+  // single fading unit, so whatever was showing before is fully gone —
+  // not stacked, not peeking through — before the next item appears.
   function createRotator({ items, elId, dotsId, storageKey, intervalMs }) {
     const el = document.getElementById(elId);
     const dotsEl = dotsId ? document.getElementById(dotsId) : null;
@@ -438,6 +375,7 @@
       if (!dotsEl) return;
       dotsEl.innerHTML = '';
       for (let i = 0; i < items.length; i++) {
+        if (!items[i] || items[i].trim() === '') continue; // no dot for blank placeholder slots
         const dot = document.createElement('div');
         dot.className = 'dot' + (i === activeIndex ? ' active' : '');
         dotsEl.appendChild(dot);
@@ -457,9 +395,9 @@
     let currentIndex = readLastIndex();
 
     function show(index, animate) {
-      if (index === -1) { el.textContent = ''; if (dotsEl) dotsEl.innerHTML = ''; return; }
+      if (index === -1) { el.innerHTML = ''; if (dotsEl) dotsEl.innerHTML = ''; return; }
       const render = () => {
-        el.textContent = items[index];
+        el.innerHTML = items[index];
         buildDots(index);
         if (animate && !reduceMotion) requestAnimationFrame(() => el.classList.remove('fade'));
       };
@@ -485,10 +423,10 @@
   }
 
   createRotator({
-    items: QUOTES,
-    elId: 'quote-text',
-    dotsId: 'quote-dots',
-    storageKey: 'cc_last_quote_index',
+    items: STAGE_ITEMS,
+    elId: 'stage',
+    dotsId: 'stage-dots',
+    storageKey: 'cc_last_stage_index',
     intervalMs: ROTATE_INTERVAL_MS
   });
 </script>
